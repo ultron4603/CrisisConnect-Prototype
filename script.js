@@ -12,6 +12,7 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
+const auth = firebase.auth();
 
 // --- Mapbox Configuration ---
 mapboxgl.accessToken = 'pk.eyJ1IjoidWx0cm9uNDYiLCJhIjoiY21ldTM5Ym41MDJ0bTJrb25wOHU1ZThuMSJ9.-PQcItLfBR4-yTgnZgoJvw';
@@ -25,6 +26,7 @@ const map = new mapboxgl.Map({
 
 // --- Main App Logic ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Get all UI elements
     const actionBtn = document.getElementById('action-btn');
     const actionChoicePanel = document.getElementById('action-choice-panel');
     const needHelpFormEl = document.getElementById('need-help-form');
@@ -34,7 +36,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const needCategoryDropdown = document.getElementById('need-category');
     const otherCategoryWrapper = document.getElementById('other-category-wrapper');
     const mapToggleButton = document.getElementById('map-toggle-btn');
+    const signinBtn = document.getElementById('signin-btn');
+    const userPic = document.getElementById('user-pic');
 
+    // --- Authentication Logic ---
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+    signinBtn.addEventListener('click', () => {
+        auth.signInWithPopup(googleProvider);
+    });
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            // User is signed in
+            console.log('User signed in:', user.displayName);
+            signinBtn.classList.add('hidden');
+            userPic.src = user.photoURL;
+            userPic.classList.remove('hidden');
+            actionBtn.classList.remove('hidden');
+        } else {
+            // User is signed out
+            console.log('User signed out');
+            signinBtn.classList.remove('hidden');
+            userPic.classList.add('hidden');
+            actionBtn.classList.add('hidden');
+            hideAllPanels();
+        }
+    });
+
+    // --- UI Interaction Logic ---
     mapToggleButton.addEventListener('click', () => {
         const currentStyle = map.getStyle().name;
         if (currentStyle === 'Mapbox Streets') {
@@ -82,6 +112,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Form Submission Logic ---
+    function addPinToMap(data) {
+        const user = auth.currentUser;
+        if (!user) {
+            return alert('Please sign in to post a request.');
+        }
+
+        if (!navigator.geolocation) {
+            return alert('Your browser does not support geolocation.');
+        }
+        navigator.geolocation.getCurrentPosition(position => {
+            const { latitude, longitude } = position.coords;
+            
+            // Add user info to the data
+            data.uid = user.uid;
+            data.userName = user.displayName;
+            data.userPhoto = user.photoURL;
+            data.lat = latitude;
+            data.lng = longitude;
+
+            database.ref('pins').push(data)
+                .then(() => {
+                    alert('Your request has been posted on the map!');
+                    hideAllPanels();
+                })
+                .catch(err => {
+                    console.error("Error adding data: ", err);
+                    alert('There was an error posting your request.');
+                });
+        }, () => {
+            alert('Unable to retrieve your location. Please enable location services.');
+        });
+    }
+    
     sosForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const formData = new FormData(sosForm);
@@ -115,30 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
         addPinToMap(offerData);
     });
 
-    // --- Geolocation and Database Logic ---
-    function addPinToMap(data) {
-        if (!navigator.geolocation) {
-            return alert('Your browser does not support geolocation.');
-        }
-        navigator.geolocation.getCurrentPosition(position => {
-            const { latitude, longitude } = position.coords;
-            data.lat = latitude;
-            data.lng = longitude;
-
-            database.ref('pins').push(data)
-                .then(() => {
-                    alert('Your request has been posted on the map!');
-                    hideAllPanels();
-                })
-                .catch(err => {
-                    console.error("Error adding data: ", err);
-                    alert('There was an error posting your request.');
-                });
-        }, () => {
-            alert('Unable to retrieve your location. Please enable location services.');
-        });
-    }
-
     // --- Real-time Pin Listener ---
     database.ref('pins').on('child_added', snapshot => {
         const pin = snapshot.val();
@@ -149,22 +188,12 @@ document.addEventListener('DOMContentLoaded', () => {
         new mapboxgl.Marker(el)
             .setLngLat([pin.lng, pin.lat])
             .setPopup(new mapboxgl.Popup().setHTML(
-                `<strong>${pin.type === 'SOS' ? pin.category : 'Offer of Help'}</strong><p>${pin.description || pin.notes}</p>`
+                `<strong>${pin.type === 'SOS' ? pin.category : 'Offer of Help'}</strong>
+                 <p>${pin.description || pin.notes}</p>
+                 <p><img src="${pin.userPhoto}" width="20" height="20" style="border-radius: 50%;"/> Posted by ${pin.userName}</p>`
             ))
             .addTo(map);
     });
 
     hideAllPanels();
 });
-
-// Add a bit of CSS for the markers dynamically
-const style = document.createElement('style');
-style.innerHTML = `
-.marker {
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  border: 2px solid white;
-  box-shadow: 0 0 5px rgba(0,0,0,0.5);
-}`;
-document.head.appendChild(style);
