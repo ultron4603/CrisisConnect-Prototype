@@ -1,155 +1,24 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
-}
-
-#map {
-    width: 100%;
-    height: 100%;
-    background-color: #e0e0e0;
-}
-
-.top-controls {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-#map-toggle-btn {
-    padding: 10px;
-    border-radius: 50px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    cursor: pointer;
-    font-size: 1em;
-    border: 1px solid #ccc;
-}
-
-#action-btn {
-    background-color: #007BFF; /* Primary Blue */
-    color: white;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 2em;
-    line-height: 40px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-#user-profile {
-    display: flex;
-    align-items: center;
-}
-
-#signin-btn {
-    padding: 10px 15px;
-    background-color: #4285F4;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-#user-pic {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid white;
-}
-
-.panel {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    padding: 20px;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
-    transform: translateY(100%);
-    transition: transform 0.3s ease-in-out;
-}
-
-.panel:not(.hidden) {
-    transform: translateY(0);
-}
-
-.hidden {
-    display: none;
-}
-
-.choice-btn {
-    display: block;
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 10px;
-    font-size: 1.2em;
-    border-radius: 10px;
-    border: 2px solid;
-    cursor: pointer;
-}
-
-.need-help {
-    background-color: #ffdddd;
-    border-color: #dc3545;
-    color: #dc3545;
-}
-
-.want-to-help {
-    background-color: #d4edda;
-    border-color: #28a745;
-    color: #28a745;
-}
-
-#close-panel-btn, .cancel-btn {
-    background: #f0f0f0;
-    border: none;
-    color: #555;
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
+body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: Arial, sans-serif; overflow: hidden; }
+#map { width: 100%; height: 100%; background-color: #e0e0e0; }
+.top-controls { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; align-items: center; }
+#map-toggle-btn { padding: 10px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; font-size: 1em; border: 1px solid #ccc; }
+#action-btn { background-color: #007BFF; color: white; width: 50px; height: 50px; border-radius: 50%; font-size: 2em; line-height: 40px; border: none; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+#auth-container { display: flex; align-items: center; }
+#signin-btn { padding: 10px 15px; background-color: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+#user-pic { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; cursor: pointer; }
+.panel { position: absolute; bottom: 0; left: 0; right: 0; background: white; padding: 20px; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transform: translateY(100%); transition: transform 0.3s ease-in-out; }
+.panel:not(.hidden) { transform: translateY(0); }
+.hidden { display: none; }
+.choice-btn { display: block; width: 100%; padding: 15px; margin-bottom: 10px; font-size: 1.2em; border-radius: 10px; border: 2px solid; cursor: pointer; }
+.need-help { background-color: #ffdddd; border-color: #dc3545; color: #dc3545; }
+.want-to-help { background-color: #d4edda; border-color: #28a745; color: #28a745; }
+#close-panel-btn, .cancel-btn { background: #f0f0f0; border: none; color: #555; width: 100%; padding: 10px; margin-top: 10px; border-radius: 8px; cursor: pointer; }
 form { display: flex; flex-direction: column; }
 form label { margin-top: 10px; margin-bottom: 5px; font-weight: bold; }
-form input, form select, form textarea {
-    width: 95%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 1em;
-}
+form input, form select, form textarea { width: 95%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 1em; }
 .checkbox-group label { font-weight: normal; }
 .checkbox-group input { width: auto; }
-
-.submit-btn {
-    margin-top: 20px;
-    padding: 15px;
-    border: none;
-    color: white;
-    font-size: 1.2em;
-    border-radius: 10px;
-    cursor: pointer;
-}
+.submit-btn { margin-top: 20px; padding: 15px; border: none; color: white; font-size: 1.2em; border-radius: 10px; cursor: pointer; }
 .submit-btn.need-help { background-color: #dc3545; }
 .submit-btn.want-to-help { background-color: #28a745; }
-
-.marker {
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  border: 2px solid white;
-  box-shadow: 0 0 5px rgba(0,0,0,0.5);
-}
+.marker { border-radius: 50%; width: 20px; height: 20px; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
