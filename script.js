@@ -1,3 +1,28 @@
+let map; // Defines the map variable globally
+
+// This function is called by the Google Maps script when it's ready
+function initMap() {
+    // Coordinates for the center of Odisha
+    const odishaCoords = { lat: 20.9517, lng: 85.0985 };
+
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: odishaCoords,
+        zoom: 7, // Zoom level to show the whole state
+        disableDefaultUI: true // Hides default Google Maps buttons
+    });
+
+    const mapToggleButton = document.getElementById('map-toggle-btn');
+    mapToggleButton.addEventListener('click', () => {
+        if (map.getMapTypeId() === 'roadmap') {
+            map.setMapTypeId('satellite');
+            mapToggleButton.textContent = 'Map';
+        } else {
+            map.setMapTypeId('roadmap');
+            mapToggleButton.textContent = 'Satellite';
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const actionBtn = document.getElementById('action-btn');
     const actionChoicePanel = document.getElementById('action-choice-panel');
@@ -8,37 +33,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const closePanelBtn = document.getElementById('close-panel-btn');
     const cancelBtns = document.querySelectorAll('.cancel-btn');
 
-    // Function to hide all panels
     function hideAllPanels() {
         actionChoicePanel.classList.add('hidden');
-        actionChoicePanel.style.display = 'none';
-
         needHelpForm.classList.add('hidden');
-        needHelpForm.style.display = 'none';
-
         wantToHelpForm.classList.add('hidden');
-        wantToHelpForm.style.display = 'none';
     }
 
     // Show the main action choice panel
     actionBtn.addEventListener('click', () => {
         hideAllPanels();
-        actionChoicePanel.style.display = 'block';
-        setTimeout(() => actionChoicePanel.classList.remove('hidden'), 10);
+        actionChoicePanel.classList.remove('hidden');
     });
 
     // Show the "Need Help" form
     needHelpBtn.addEventListener('click', () => {
         hideAllPanels();
-        needHelpForm.style.display = 'block';
-        setTimeout(() => needHelpForm.classList.remove('hidden'), 10);
+        needHelpForm.classList.remove('hidden');
     });
 
     // Show the "Want to Help" form
     wantToHelpBtn.addEventListener('click', () => {
         hideAllPanels();
-        wantToHelpForm.style.display = 'block';
-        setTimeout(() => wantToHelpForm.classList.remove('hidden'), 10);
+        wantToHelpForm.classList.remove('hidden');
     });
 
     // Close buttons
@@ -47,9 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     cancelBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            needHelpForm.classList.add('hidden');
-            wantToHelpForm.classList.add('hidden');
+        btn.addEventListener('click', (e) => {
+            e.target.closest('.panel').classList.add('hidden');
         });
     });
 
@@ -61,4 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hideAllPanels();
         });
     });
+
+    // Re-hide panels on DOMContentLoaded to ensure they are hidden on page load
+    hideAllPanels();
 });
