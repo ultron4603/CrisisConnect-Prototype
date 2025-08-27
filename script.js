@@ -1,27 +1,28 @@
-let map; // Defines the map variable globally
+// Set your Mapbox access token
+mapboxgl.accessToken = 'pk.eyJ1IjoidWx0cm9uNDYiLCJhIjoiY21ldTM5Ym41MDJ0bTJrb25wOHU1ZThuMSJ9.-PQcItLfBR4-yTgnZgoJvw';
 
-// This function is called by the Google Maps script when it's ready
-function initMap() {
-    // Coordinates for the center of Odisha
-    const odishaCoords = { lat: 20.9517, lng: 85.0985 };
+// Coordinates for the center of Odisha
+const odishaLngLat = [85.0985, 20.9517]; // Note: Mapbox uses [longitude, latitude]
 
-    map = new google.maps.Map(document.getElementById("map"), {
-        center: odishaCoords,
-        zoom: 7, // Zoom level to show the whole state
-        disableDefaultUI: true // Hides default Google Maps buttons
-    });
+// Initialize the map
+const map = new mapboxgl.Map({
+    container: 'map', // container ID
+    style: 'mapbox://styles/mapbox/streets-v12', // style URL
+    center: odishaLngLat, // starting position
+    zoom: 6.5 // starting zoom to show the whole state
+});
 
-    const mapToggleButton = document.getElementById('map-toggle-btn');
-    mapToggleButton.addEventListener('click', () => {
-        if (map.getMapTypeId() === 'roadmap') {
-            map.setMapTypeId('satellite');
-            mapToggleButton.textContent = 'Map';
-        } else {
-            map.setMapTypeId('roadmap');
-            mapToggleButton.textContent = 'Satellite';
-        }
-    });
-}
+const mapToggleButton = document.getElementById('map-toggle-btn');
+mapToggleButton.addEventListener('click', () => {
+    const currentStyle = map.getStyle().name;
+    if (currentStyle === 'Mapbox Streets') {
+        map.setStyle('mapbox://styles/mapbox/satellite-streets-v12');
+        mapToggleButton.textContent = 'Map';
+    } else {
+        map.setStyle('mapbox://styles/mapbox/streets-v12');
+        mapToggleButton.textContent = 'Satellite';
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     const actionBtn = document.getElementById('action-btn');
