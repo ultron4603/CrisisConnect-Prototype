@@ -1,16 +1,17 @@
 // --- Firebase Configuration ---
 const firebaseConfig = {
-  apiKey: "AIzaSyByn_uWCz4C-3KNwgvwF7_4LN0jBLCO_ZQ",
-  authDomain: "crisisconnect-app.firebaseapp.com",
-  projectId: "crisisconnect-app",
-  storageBucket: "crisisconnect-app.firebasestorage.app",
-  messagingSenderId: "1068587491180",
-  appId: "1:1068587491180:web:aef59c36358efce6731d49"
+  apiKey: "AIzaSyDnRUIDKoANI3GJ_hyRf4VEmUcIXZceDTE",
+  authDomain: "crisisconnect-application.firebaseapp.com",
+  databaseURL: "https://crisisconnect-application-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "crisisconnect-application",
+  storageBucket: "crisisconnect-application.firebasestorage.app",
+  messagingSenderId: "438935321367",
+  appId: "1:438935321367:web:9cc201bc83a7ed2d775552"
 };
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const database = firebase.database();
 
 // --- Mapbox Configuration ---
 mapboxgl.accessToken = 'pk.eyJ1IjoidWx0cm9uNDYiLCJhIjoiY21ldTM5Ym41MDJ0bTJrb25wOHU1ZThuMSJ9.-PQcItLfBR4-yTgnZgoJvw';
@@ -32,6 +33,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const offerForm = document.getElementById('offer-form');
     const needCategoryDropdown = document.getElementById('need-category');
     const otherCategoryWrapper = document.getElementById('other-category-wrapper');
+    const mapToggleButton = document.getElementById('map-toggle-btn');
+
+    mapToggleButton.addEventListener('click', () => {
+        const currentStyle = map.getStyle().name;
+        if (currentStyle === 'Mapbox Streets') {
+            map.setStyle('mapbox://styles/mapbox/satellite-streets-v12');
+            mapToggleButton.textContent = 'Map';
+        } else {
+            map.setStyle('mapbox://styles/mapbox/streets-v12');
+            mapToggleButton.textContent = 'Satellite';
+        }
+    });
 
     function hideAllPanels() {
         actionChoicePanel.classList.add('hidden');
@@ -82,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             category: category,
             people: formData.get('people'),
             description: formData.get('description'),
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            timestamp: Date.now()
         };
         addPinToMap(alertData);
     });
@@ -97,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             offers: offers,
             availability: formData.get('availability'),
             notes: formData.get('notes'),
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            timestamp: Date.now()
         };
         addPinToMap(offerData);
     });
@@ -109,15 +122,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         navigator.geolocation.getCurrentPosition(position => {
             const { latitude, longitude } = position.coords;
-            data.location = new firebase.firestore.GeoPoint(latitude, longitude);
+            data.lat = latitude;
+            data.lng = longitude;
 
-            db.collection('pins').add(data)
+            database.ref('pins').push(data)
                 .then(() => {
                     alert('Your request has been posted on the map!');
                     hideAllPanels();
                 })
                 .catch(err => {
-                    console.error("Error adding document: ", err);
+                    console.error("Error adding data: ", err);
                     alert('There was an error posting your request.');
                 });
         }, () => {
@@ -126,22 +140,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Real-time Pin Listener ---
-    db.collection('pins').onSnapshot(snapshot => {
-        snapshot.docChanges().forEach(change => {
-            if (change.type === 'added') {
-                const pin = change.doc.data();
-                const el = document.createElement('div');
-                el.className = 'marker';
-                el.style.backgroundColor = pin.type === 'SOS' ? 'red' : 'green';
+    database.ref('pins').on('child_added', snapshot => {
+        const pin = snapshot.val();
+        const el = document.createElement('div');
+        el.className = 'marker';
+        el.style.backgroundColor = pin.type === 'SOS' ? 'red' : 'green';
 
-                new mapboxgl.Marker(el)
-                    .setLngLat([pin.location.longitude, pin.location.latitude])
-                    .setPopup(new mapboxgl.Popup().setHTML(
-                        `<strong>${pin.type === 'SOS' ? pin.category : 'Offer of Help'}</strong><p>${pin.description || pin.notes}</p>`
-                    ))
-                    .addTo(map);
-            }
-        });
+        new mapboxgl.Marker(el)
+            .setLngLat([pin.lng, pin.lat])
+            .setPopup(new mapboxgl.Popup().setHTML(
+                `<strong>${pin.type === 'SOS' ? pin.category : 'Offer of Help'}</strong><p>${pin.description || pin.notes}</p>`
+            ))
+            .addTo(map);
     });
 
     hideAllPanels();
