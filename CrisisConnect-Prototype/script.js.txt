@@ -1,0 +1,64 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const actionBtn = document.getElementById('action-btn');
+    const actionChoicePanel = document.getElementById('action-choice-panel');
+    const needHelpForm = document.getElementById('need-help-form');
+    const wantToHelpForm = document.getElementById('want-to-help-form');
+    const needHelpBtn = document.getElementById('need-help-btn');
+    const wantToHelpBtn = document.getElementById('want-to-help-btn');
+    const closePanelBtn = document.getElementById('close-panel-btn');
+    const cancelBtns = document.querySelectorAll('.cancel-btn');
+
+    // Function to hide all panels
+    function hideAllPanels() {
+        actionChoicePanel.classList.add('hidden');
+        actionChoicePanel.style.display = 'none';
+
+        needHelpForm.classList.add('hidden');
+        needHelpForm.style.display = 'none';
+
+        wantToHelpForm.classList.add('hidden');
+        wantToHelpForm.style.display = 'none';
+    }
+
+    // Show the main action choice panel
+    actionBtn.addEventListener('click', () => {
+        hideAllPanels();
+        actionChoicePanel.style.display = 'block';
+        setTimeout(() => actionChoicePanel.classList.remove('hidden'), 10);
+    });
+
+    // Show the "Need Help" form
+    needHelpBtn.addEventListener('click', () => {
+        hideAllPanels();
+        needHelpForm.style.display = 'block';
+        setTimeout(() => needHelpForm.classList.remove('hidden'), 10);
+    });
+
+    // Show the "Want to Help" form
+    wantToHelpBtn.addEventListener('click', () => {
+        hideAllPanels();
+        wantToHelpForm.style.display = 'block';
+        setTimeout(() => wantToHelpForm.classList.remove('hidden'), 10);
+    });
+
+    // Close buttons
+    closePanelBtn.addEventListener('click', () => {
+        actionChoicePanel.classList.add('hidden');
+    });
+
+    cancelBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            needHelpForm.classList.add('hidden');
+            wantToHelpForm.classList.add('hidden');
+        });
+    });
+
+    // Prevent form submission for this prototype
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Thank you! Your request has been submitted. (Functionality to show on map coming soon).');
+            hideAllPanels();
+        });
+    });
+});
