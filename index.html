@@ -73,6 +73,16 @@
             <button type="button" class="cancel-btn">Cancel</button>
         </form>
     </div>
+
+    <div id="chat-panel" class="panel hidden">
+        <h2 id="chat-header">Chat</h2>
+        <div id="chat-messages"></div>
+        <form id="chat-form">
+            <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
+            <button type="submit">Send</button>
+        </form>
+        <button id="close-chat-btn" class="cancel-btn">Close Chat</button>
+    </div>
     
     <script src='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js'></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
