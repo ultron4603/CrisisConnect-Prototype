@@ -33,7 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const googleProvider = new firebase.auth.GoogleAuthProvider();
 
     signinBtn.addEventListener('click', () => {
-        auth.signInWithRedirect(googleProvider); // Use redirect for mobile-friendliness
+        // ** THE FIX: Switched to signInWithPopup **
+        auth.signInWithPopup(googleProvider)
+            .catch(error => {
+                console.error("Authentication Error:", error);
+                alert("Could not sign in. Please make sure pop-ups are enabled for this site.");
+            });
     });
     
     userPic.addEventListener('click', () => {
@@ -122,17 +127,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     database.ref('pins').on('child_added', snapshot => {
         const pin = snapshot.val();
-        const el = document.createElement('div');
-        el.className = 'marker';
-        el.style.backgroundColor = pin.type === 'SOS' ? 'red' : 'green';
-        new mapboxgl.Marker(el)
-            .setLngLat([pin.lng, pin.lat])
-            .setPopup(new mapboxgl.Popup().setHTML(
-                `<strong>${pin.type === 'SOS' ? pin.category : 'Offer of Help'}</strong>
-                 <p>${pin.description || pin.notes}</p>
-                 <p><img src="${pin.userPhoto}" width="20" height="20" style="border-radius: 50%;"/> Posted by ${pin.userName}</p>`
-            ))
-            .addTo(map);
+        if (pin && pin.lat && pin.lng) {
+            const el = document.createElement('div');
+            el.className = 'marker';
+            el.style.backgroundColor = pin.type === 'SOS' ? 'red' : 'green';
+            new mapboxgl.Marker(el)
+                .setLngLat([pin.lng, pin.lat])
+                .setPopup(new mapboxgl.Popup().setHTML(
+                    `<strong>${pin.type === 'SOS' ? pin.category : 'Offer of Help'}</strong>
+                     <p>${pin.description || pin.notes}</p>
+                     <p><img src="${pin.userPhoto}" width="20" height="20" style="border-radius: 50%;"/> Posted by ${pin.userName}</p>`
+                ))
+                .addTo(map);
+        }
     });
 
     hideAllPanels();
