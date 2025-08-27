@@ -120,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function createPopupHTML(pin, pinId) {
         const user = auth.currentUser;
         let buttonHTML = '';
-        // Show chat button if logged in AND it's not the user's own pin
         if (user && user.uid !== pin.uid) { 
             buttonHTML = `<button class="chat-btn" data-pin-id="${pinId}" data-pin-uid="${pin.uid}">Offer Help & Chat</button>`;
         }
@@ -137,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentUser = auth.currentUser;
             if (!currentUser) return alert("Please sign in to chat.");
             
-            // Create a unique, consistent chat ID between two users
             const chatId = [currentUser.uid, pinUid].sort().join('_');
             startChat(chatId);
         }
@@ -146,13 +144,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function startChat(chatId) {
         hideAllPanels();
         chatPanel.classList.remove('hidden');
-        chatMessages.innerHTML = ''; // Clear old messages
+        chatMessages.innerHTML = ''; 
         chatHeader.textContent = `Secure Chat`;
         chatForm.dataset.chatId = chatId;
 
         const messagesRef = database.ref(`chats/${chatId}`);
-        if (activeChatListener) activeChatListener.off(); // Detach old listener
-        activeChatListener = messages.ref;
+        if (activeChatListener) activeChatListener.off();
+        
+        // ** THE FIX IS HERE **
+        activeChatListener = messagesRef; // Corrected the variable name
 
         messagesRef.orderByChild('timestamp').on('child_added', (snapshot) => {
             const msg = snapshot.val();
