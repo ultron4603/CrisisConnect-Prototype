@@ -24,7 +24,7 @@
 
     <div id="need-help-form" class="panel hidden">
         <h2>Request Emergency Help</h2>
-        <form>
+        <form id="sos-form">
             <label for="need-category">Category:</label>
             <select id="need-category" name="category">
                 <option value="cyclone">Cyclone</option>
@@ -54,7 +54,7 @@
 
     <div id="want-to-help-form" class="panel hidden">
         <h2>Offer Your Help</h2>
-        <form>
+        <form id="offer-form">
             <label>I can offer...</label>
             <div class="checkbox-group">
                 <input type="checkbox" id="shelter" name="offer" value="shelter"><label for="shelter">Shelter</label><br>
@@ -81,6 +81,10 @@
     </div>
     
     <script src='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js'></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>
