@@ -33,7 +33,13 @@
                 <option value="medical">Medical</option>
                 <option value="power">Power Outage</option>
                 <option value="vehicle">Vehicle Issue</option>
+                <option value="other">Other (Please specify)</option>
             </select>
+
+            <div id="other-category-wrapper" class="hidden">
+                <label for="other-category-input">Specify Emergency:</label>
+                <input type="text" id="other-category-input" placeholder="e.g., House Fire, Gas Leak...">
+            </div>
 
             <label for="people-count">Number of People:</label>
             <input type="number" id="people-count" name="people" min="1" value="1">
