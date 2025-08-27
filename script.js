@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const wantToHelpBtn = document.getElementById('want-to-help-btn');
     const closePanelBtn = document.getElementById('close-panel-btn');
     const cancelBtns = document.querySelectorAll('.cancel-btn');
+    
+    // New elements for the "Other" category
+    const needCategoryDropdown = document.getElementById('need-category');
+    const otherCategoryWrapper = document.getElementById('other-category-wrapper');
 
     function hideAllPanels() {
         actionChoicePanel.classList.add('hidden');
@@ -67,6 +71,16 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', (e) => {
             e.target.closest('.panel').classList.add('hidden');
         });
+    });
+
+    // ***** NEW LOGIC *****
+    // Show/hide the "Other" text box based on dropdown selection
+    needCategoryDropdown.addEventListener('change', () => {
+        if (needCategoryDropdown.value === 'other') {
+            otherCategoryWrapper.classList.remove('hidden');
+        } else {
+            otherCategoryWrapper.classList.add('hidden');
+        }
     });
 
     // Prevent form submission for this prototype
