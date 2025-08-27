@@ -13,7 +13,11 @@
 
     <div class="top-controls">
         <button id="map-toggle-btn">Satellite</button>
-        <button id="action-btn">+</button>
+        <button id="action-btn" class="hidden">+</button>
+        <div id="user-profile">
+            <button id="signin-btn">Sign In</button>
+            <img id="user-pic" class="hidden" alt="User Profile Picture">
+        </div>
     </div>
 
     <div id="action-choice-panel" class="panel hidden">
@@ -84,6 +88,7 @@
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     
     <script src="script.js"></script>
 </body>
