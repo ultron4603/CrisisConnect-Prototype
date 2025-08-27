@@ -1,97 +1,160 @@
-// Set your Mapbox access token
+// --- Firebase Configuration ---
+const firebaseConfig = {
+  apiKey: "AIzaSyByn_uWCz4C-3KNwgvwF7_4LN0jBLCO_ZQ",
+  authDomain: "crisisconnect-app.firebaseapp.com",
+  projectId: "crisisconnect-app",
+  storageBucket: "crisisconnect-app.firebasestorage.app",
+  messagingSenderId: "1068587491180",
+  appId: "1:1068587491180:web:aef59c36358efce6731d49"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// --- Mapbox Configuration ---
 mapboxgl.accessToken = 'pk.eyJ1IjoidWx0cm9uNDYiLCJhIjoiY21ldTM5Ym41MDJ0bTJrb25wOHU1ZThuMSJ9.-PQcItLfBR4-yTgnZgoJvw';
-
-// Coordinates for the center of Odisha
-const odishaLngLat = [85.0985, 20.9517]; // Note: Mapbox uses [longitude, latitude]
-
-// Initialize the map
+const odishaLngLat = [85.0985, 20.9517];
 const map = new mapboxgl.Map({
-    container: 'map', // container ID
-    style: 'mapbox://styles/mapbox/streets-v12', // style URL
-    center: odishaLngLat, // starting position
-    zoom: 6.5 // starting zoom to show the whole state
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v12',
+    center: odishaLngLat,
+    zoom: 6.5
 });
 
-const mapToggleButton = document.getElementById('map-toggle-btn');
-mapToggleButton.addEventListener('click', () => {
-    const currentStyle = map.getStyle().name;
-    if (currentStyle === 'Mapbox Streets') {
-        map.setStyle('mapbox://styles/mapbox/satellite-streets-v12');
-        mapToggleButton.textContent = 'Map';
-    } else {
-        map.setStyle('mapbox://styles/mapbox/streets-v12');
-        mapToggleButton.textContent = 'Satellite';
-    }
-});
-
+// --- Main App Logic ---
 document.addEventListener('DOMContentLoaded', () => {
     const actionBtn = document.getElementById('action-btn');
     const actionChoicePanel = document.getElementById('action-choice-panel');
-    const needHelpForm = document.getElementById('need-help-form');
-    const wantToHelpForm = document.getElementById('want-to-help-form');
-    const needHelpBtn = document.getElementById('need-help-btn');
-    const wantToHelpBtn = document.getElementById('want-to-help-btn');
-    const closePanelBtn = document.getElementById('close-panel-btn');
-    const cancelBtns = document.querySelectorAll('.cancel-btn');
-    
-    // New elements for the "Other" category
+    const needHelpFormEl = document.getElementById('need-help-form');
+    const wantToHelpFormEl = document.getElementById('want-to-help-form');
+    const sosForm = document.getElementById('sos-form');
+    const offerForm = document.getElementById('offer-form');
     const needCategoryDropdown = document.getElementById('need-category');
     const otherCategoryWrapper = document.getElementById('other-category-wrapper');
 
     function hideAllPanels() {
         actionChoicePanel.classList.add('hidden');
-        needHelpForm.classList.add('hidden');
-        wantToHelpForm.classList.add('hidden');
+        needHelpFormEl.classList.add('hidden');
+        wantToHelpFormEl.classList.add('hidden');
     }
 
-    // Show the main action choice panel
     actionBtn.addEventListener('click', () => {
         hideAllPanels();
         actionChoicePanel.classList.remove('hidden');
     });
 
-    // Show the "Need Help" form
-    needHelpBtn.addEventListener('click', () => {
+    document.getElementById('need-help-btn').addEventListener('click', () => {
         hideAllPanels();
-        needHelpForm.classList.remove('hidden');
+        needHelpFormEl.classList.remove('hidden');
     });
 
-    // Show the "Want to Help" form
-    wantToHelpBtn.addEventListener('click', () => {
+    document.getElementById('want-to-help-btn').addEventListener('click', () => {
         hideAllPanels();
-        wantToHelpForm.classList.remove('hidden');
+        wantToHelpFormEl.classList.remove('hidden');
     });
 
-    // Close buttons
-    closePanelBtn.addEventListener('click', () => {
+    document.getElementById('close-panel-btn').addEventListener('click', () => {
         actionChoicePanel.classList.add('hidden');
     });
-
-    cancelBtns.forEach(btn => {
+    
+    document.querySelectorAll('.cancel-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.target.closest('.panel').classList.add('hidden');
         });
     });
 
-    // ***** NEW LOGIC *****
-    // Show/hide the "Other" text box based on dropdown selection
     needCategoryDropdown.addEventListener('change', () => {
-        if (needCategoryDropdown.value === 'other') {
-            otherCategoryWrapper.classList.remove('hidden');
-        } else {
-            otherCategoryWrapper.classList.add('hidden');
-        }
+        otherCategoryWrapper.classList.toggle('hidden', needCategoryDropdown.value !== 'other');
     });
 
-    // Prevent form submission for this prototype
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Thank you! Your request has been submitted. (Functionality to show on map coming soon).');
-            hideAllPanels();
+    // --- Form Submission Logic ---
+    sosForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(sosForm);
+        let category = formData.get('category');
+        if (category === 'other') {
+            category = document.getElementById('other-category-input').value || 'Other';
+        }
+
+        const alertData = {
+            type: 'SOS',
+            category: category,
+            people: formData.get('people'),
+            description: formData.get('description'),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        addPinToMap(alertData);
+    });
+
+    offerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(offerForm);
+        const offers = Array.from(formData.getAll('offer'));
+
+        const offerData = {
+            type: 'HELP',
+            offers: offers,
+            availability: formData.get('availability'),
+            notes: formData.get('notes'),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        addPinToMap(offerData);
+    });
+
+    // --- Geolocation and Database Logic ---
+    function addPinToMap(data) {
+        if (!navigator.geolocation) {
+            return alert('Your browser does not support geolocation.');
+        }
+        navigator.geolocation.getCurrentPosition(position => {
+            const { latitude, longitude } = position.coords;
+            data.location = new firebase.firestore.GeoPoint(latitude, longitude);
+
+            db.collection('pins').add(data)
+                .then(() => {
+                    alert('Your request has been posted on the map!');
+                    hideAllPanels();
+                })
+                .catch(err => {
+                    console.error("Error adding document: ", err);
+                    alert('There was an error posting your request.');
+                });
+        }, () => {
+            alert('Unable to retrieve your location. Please enable location services.');
+        });
+    }
+
+    // --- Real-time Pin Listener ---
+    db.collection('pins').onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+            if (change.type === 'added') {
+                const pin = change.doc.data();
+                const el = document.createElement('div');
+                el.className = 'marker';
+                el.style.backgroundColor = pin.type === 'SOS' ? 'red' : 'green';
+
+                new mapboxgl.Marker(el)
+                    .setLngLat([pin.location.longitude, pin.location.latitude])
+                    .setPopup(new mapboxgl.Popup().setHTML(
+                        `<strong>${pin.type === 'SOS' ? pin.category : 'Offer of Help'}</strong><p>${pin.description || pin.notes}</p>`
+                    ))
+                    .addTo(map);
+            }
         });
     });
 
-    // Re-hide panels on DOMContentLoaded to ensure they are hidden on page load
     hideAllPanels();
 });
+
+// Add a bit of CSS for the markers dynamically
+const style = document.createElement('style');
+style.innerHTML = `
+.marker {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  border: 2px solid white;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}`;
+document.head.appendChild(style);
