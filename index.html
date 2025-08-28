@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CrisisConnect</title>
+    <title>CrisisConnect V2</title>
     <link href='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css' rel='stylesheet' />
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,76 +11,31 @@
     <div id="map"></div>
 
     <div class="top-controls">
-        <button id="inbox-btn" class="hidden">Inbox <span id="notification-dot" class="hidden"></span></button>
-        <button id="map-toggle-btn">Satellite</button>
-        <div id="auth-container">
-            <button id="signin-btn">Sign In</button>
-            <img id="user-pic" class="hidden" alt="User Profile">
+        <div id="weather-widget" class="control-cluster hidden">
+            <span id="weather-icon">🤔</span>
+            <span id="weather-temp">--°C</span>
+            <span id="weather-desc">Loading...</span>
         </div>
-        <button id="action-btn" class="hidden">+</button>
-    </div>
-
-    <div id="action-choice-panel" class="panel hidden">
-        <button id="need-help-btn" class="choice-btn need-help">🔴 I Need Help</button>
-        <button id="want-to-help-btn" class="choice-btn want-to-help">🟢 I Want to Help</button>
-        <button id="close-panel-btn" class="cancel-btn">Cancel</button>
-    </div>
-    <div id="need-help-form" class="panel hidden">
-        <h2>Request Emergency Help</h2>
-        <form id="sos-form">
-            <label for="need-category">Category:</label>
-            <select id="need-category" name="category">
-                <option value="cyclone">Cyclone</option><option value="flood">Flood</option><option value="snake">Wild Animal/Snake</option><option value="medical">Medical</option><option value="power">Power Outage</option><option value="vehicle">Vehicle Issue</option><option value="other">Other (Please specify)</option>
-            </select>
-            <div id="other-category-wrapper" class="hidden"><label for="other-category-input">Specify Emergency:</label><input type="text" id="other-category-input" placeholder="e.g., House Fire, Gas Leak..."></div>
-            <label for="people-count">Number of People:</label><input type="number" id="people-count" name="people" min="1" value="1">
-            <label for="need-description">Short Description:</label><textarea id="need-description" name="description" rows="3" placeholder="Briefly describe the situation..."></textarea>
-            <button type="submit" class="submit-btn need-help">SUBMIT SOS</button><button type="button" class="cancel-btn">Cancel</button>
-        </form>
-    </div>
-    <div id="want-to-help-form" class="panel hidden">
-        <h2>Offer Your Help</h2>
-        <form id="offer-form">
-            <label>I can offer...</label>
-            <div class="checkbox-group">
-                <input type="checkbox" id="shelter" name="offer" value="shelter"><label for="shelter">Shelter</label><br>
-                <input type="checkbox" id="food" name="offer" value="food"><label for="food">Food/Water</label><br>
-                <input type="checkbox" id="firstaid" name="offer" value="firstaid"><label for="firstaid">First Aid</label><br>
-                <input type="checkbox" id="lift" name="offer" value="lift"><label for="lift">Vehicle/Lift</label><br>
-                <input type="checkbox" id="tools" name="offer" value="tools"><label for="tools">Tools</label><br>
-                <input type="checkbox" id="power" name="offer" value="power"><label for="power">Power/Charging</label><br>
-            </div>
-            <label for="availability">Available for...</label><select id="availability" name="availability"><option value="2h">Next 2 Hours</option><option value="6h">Next 6 Hours</option><option value="24h">All Day</option></select>
-            <label for="offer-notes">Notes:</label><textarea id="offer-notes" name="notes" rows="2" placeholder="Add a short note..."></textarea>
-            <button type="submit" class="submit-btn want-to-help">POST OFFER</button><button type="button" class="cancel-btn">Cancel</button>
-        </form>
-    </div>
-
-    <div id="inbox-panel" class="panel hidden">
-        <h2>Inbox</h2>
-        <div id="inbox-content">
-            <h3>Chat Requests</h3>
-            <div id="chat-requests-list"><p>No new requests.</p></div>
-            <h3>Conversations</h3>
-            <div id="conversations-list"><p>No active conversations.</p></div>
+        
+        <div class="control-cluster">
+            <button id="inbox-btn" class="control-button hidden">
+                ✉️
+                <span id="notification-dot" class="hidden"></span>
+            </button>
+            <button id="emergency-btn" class="control-button">🛡️</button>
+            <button id="sos-btn" class="control-button hidden">SOS</button>
         </div>
-        <button class="cancel-btn">Close</button>
     </div>
 
-    <div id="chat-panel" class="panel hidden">
-        <h2 id="chat-header">Chat</h2>
-        <div id="chat-messages"></div>
-        <form id="chat-form">
-            <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off" required>
-            <button type="submit">Send</button>
-        </form>
-        <button class="cancel-btn">Close Chat</button>
+    <div class="bottom-controls">
+         <button id="offer-help-btn" class="hidden">Offer Help</button>
     </div>
-    
+
+    <img id="user-pic" class="hidden" alt="User Profile">
+    <button id="signin-btn">Sign In</button> <div id="emergency-panel" class="panel hidden">
+        <h2>Emergency Contacts</h2>
+        </div>
     <script src='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js'></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
