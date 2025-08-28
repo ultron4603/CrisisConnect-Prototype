@@ -14,14 +14,14 @@
         <div id="weather-widget" class="control-cluster hidden">
             <span id="weather-icon">🤔</span>
             <span id="weather-temp">--°C</span>
-            <span id="weather-desc">Loading...</span>
         </div>
         <div class="control-cluster">
-            <button id="inbox-btn" class="control-button hidden">
+            <button id="inbox-btn" class="control-button hidden" title="Inbox">
                 ✉️<span id="notification-dot" class="hidden"></span>
             </button>
-            <button id="emergency-btn" class="control-button">🛡️</button>
-            <button id="sos-btn" class="control-button hidden">SOS</button>
+            <button id="emergency-btn" class="control-button" title="Emergency Numbers">🛡️</button>
+            <button id="map-style-btn" class="control-button" title="Toggle Map Style">🛰️</button>
+            <button id="sos-btn" class="control-button hidden" title="Request Help">SOS</button>
         </div>
     </div>
 
@@ -30,18 +30,28 @@
     </div>
 
     <img id="user-pic" class="hidden" alt="User Profile">
-    <button id="signin-btn">Sign In</button>
+    <button id="signin-btn">Sign In to Start</button>
 
     <div id="emergency-panel" class="panel hidden">
         <h2>Emergency Contacts</h2>
-        <div id="emergency-list">
-            <a href="tel:112" class="emergency-item"><strong>Police</strong><span>112</span></a>
-            <a href="tel:108" class="emergency-item"><strong>Ambulance</strong><span>108</span></a>
-            <a href="tel:101" class="emergency-item"><strong>Fire Department</strong><span>101</span></a>
-            <a href="tel:1077" class="emergency-item"><strong>Disaster Management</strong><span>1077</span></a>
-        </div>
+        <a href="tel:112" class="emergency-item"><strong>Police</strong><span>112</span></a>
+        <a href="tel:108" class="emergency-item"><strong>Ambulance</strong><span>108</span></a>
+        <a href="tel:101" class="emergency-item"><strong>Fire Department</strong><span>101</span></a>
+        <a href="tel:1077" class="emergency-item"><strong>Disaster Management</strong><span>1077</span></a>
         <button class="cancel-btn">Close</button>
     </div>
+    
+    <div id="need-help-form" class="panel hidden">
+        </div>
+    
+    <div id="want-to-help-form" class="panel hidden">
+        </div>
+
+    <div id="inbox-panel" class="panel hidden">
+        </div>
+
+    <div id="chat-panel" class="panel hidden">
+        </div>
     
     <script src='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js'></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
