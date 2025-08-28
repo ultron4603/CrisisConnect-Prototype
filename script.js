@@ -1,5 +1,5 @@
 // --- V2 Configurations ---
-const firebaseConfig = { apiKey: "AIzaSyDnRUIDKoANI3GJ_hyRf4VEmUcIXZceDTE", authDomain: "crisisconnect-application.firebaseapp.com", databaseURL: "https://crisisconnect-application-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "crisisconnect-application", storageBucket: "crisisconnect-application.firebasestorage.app", messagingSenderId: "438935321367", appId: "1:438935321367:web:9cc201bc83a7ed2d775552" };
+const firebaseConfig = { apiKey: "523b9642cbc6302e87135954e076db46", authDomain: "crisisconnect-application.firebaseapp.com", databaseURL: "https://crisisconnect-application-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "crisisconnect-application", storageBucket: "crisisconnect-application.firebasestorage.app", messagingSenderId: "438935321367", appId: "1:438935321367:web:9cc201bc83a7ed2d775552" };
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidWx0cm9uNDYiLCJhIjoiY21ldTM5Ym41MDJ0bTJrb25wOHU1ZThuMSJ9.-PQcItLfBR4-yTgnZgoJvw';
 const OPENWEATHER_API_KEY = '30d4741c779ba94c470ca1f63045390a'; 
 
@@ -132,3 +132,4 @@ function getWeatherIcon(weatherId) {
     return '🌍';
 }
 // (All other functions for chat, pins, etc. should be here as well)
+
